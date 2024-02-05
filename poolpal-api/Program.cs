@@ -1,4 +1,8 @@
 using Microsoft.AspNetCore.Authentication.Negotiate;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
+using poolpal_api.Database;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +12,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+var connectionString = builder.Configuration.GetConnectionString("PoolTournamentDb");
+builder.Services.AddDbContext<PoolTournamentContext>(options =>
+    options.UseSqlServer(connectionString));
 
 builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
    .AddNegotiate();
@@ -19,7 +26,13 @@ builder.Services.AddAuthorization(options =>
 });
 
 var app = builder.Build();
-
+var supportedCultures = new[] { new CultureInfo("sv-SE") };
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("sv-SE"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+});
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

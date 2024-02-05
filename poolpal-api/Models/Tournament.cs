@@ -6,12 +6,15 @@ namespace poolpal_api.Models
     {
         public int TournamentId { get; set; }
         public string Name { get; set; }
+        public TournamentFormat Format { get; set; } 
         public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
         public int ParticipantLimit { get; set; }
-        public bool IsTeamEvent { get; set; }
-        public string TournamentType { get; set; } // Single Elimination, Double Elimination
+        public bool IsTeamBased { get; set; }
 
-        // Navigation Properties
-        public ICollection<Match> Matches { get; set; }
+
+        // Navigation property
+        public List<Match> Matches { get; set; }
     }
+
 }
