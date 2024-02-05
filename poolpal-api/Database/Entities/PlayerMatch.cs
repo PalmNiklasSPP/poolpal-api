@@ -1,4 +1,6 @@
-﻿namespace poolpal_api.Models
+﻿using poolpal_api.Database.Entities;
+
+namespace poolpal_api.Models
 {
     namespace PoolTournamentApi.Models
     {

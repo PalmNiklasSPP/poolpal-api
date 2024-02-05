@@ -5,8 +5,8 @@ using System.DirectoryServices.AccountManagement;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using poolpal_api.Database;
-using poolpal_api.Models;
 using System.Security.Principal;
+using poolpal_api.Database.Entities;
 
 namespace poolpal_api.Controllers
 {

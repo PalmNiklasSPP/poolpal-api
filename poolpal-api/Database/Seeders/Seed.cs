@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using poolpal_api.Database.Entities;
 using poolpal_api.Models;
 using poolpal_api.Models.PoolTournamentApi.Models;
 

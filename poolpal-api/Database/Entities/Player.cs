@@ -1,6 +1,6 @@
 ﻿using poolpal_api.Models.PoolTournamentApi.Models;
 
-namespace poolpal_api.Models
+namespace poolpal_api.Database.Entities
 {
     public class Player
     {

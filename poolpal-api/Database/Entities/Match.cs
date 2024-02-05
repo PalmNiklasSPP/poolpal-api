@@ -1,6 +1,7 @@
-﻿using poolpal_api.Models.PoolTournamentApi.Models;
+﻿using poolpal_api.Models;
+using poolpal_api.Models.PoolTournamentApi.Models;
 
-namespace poolpal_api.Models
+namespace poolpal_api.Database.Entities
 {
     public class Match
     {
@@ -8,7 +9,7 @@ namespace poolpal_api.Models
         public int? TournamentId { get; set; }
         public DateTime MatchDate { get; set; }
         public string? Notes { get; set; }
-        public PoolGameType PoolGameType { get; set; } 
+        public PoolGameType PoolGameType { get; set; }
 
         // Navigation properties
         public Tournament? Tournament { get; set; }

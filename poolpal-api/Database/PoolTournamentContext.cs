@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using poolpal_api.Database.Entities;
 using poolpal_api.Database.Seeders;
-using poolpal_api.Models;
 using poolpal_api.Models.PoolTournamentApi.Models;
 
 namespace poolpal_api.Database
@@ -17,6 +17,8 @@ namespace poolpal_api.Database
         public DbSet<Match> Matches { get; set; }
         public DbSet<Player> Players { get; set; }
         public DbSet<PlayerMatch> PlayerMatches { get; set; }
+        public DbSet<LeaderboardEntry> LeaderboardEntries { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -54,6 +56,7 @@ namespace poolpal_api.Database
                 .WithMany(m => m.PlayerMatches)
                 .HasForeignKey(pm => pm.MatchId);
 
+            modelBuilder.Entity<LeaderboardEntry>().ToView("Leaderboard").HasNoKey();
 
             Seed.DoSeed(modelBuilder);
         }

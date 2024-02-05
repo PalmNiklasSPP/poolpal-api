@@ -1,4 +1,4 @@
-﻿namespace poolpal_api.Models
+﻿namespace poolpal_api.Database.Entities
 {
     public class LeaderboardEntry //  Maybe use a view
     {
