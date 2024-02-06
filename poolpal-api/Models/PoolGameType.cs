@@ -4,14 +4,14 @@
     {
         EightBall,
         NineBall,
-        TenBall,
-        StraightPool,
-        OnePocket,
-        BankPool,
-        Rotation,
-        Snooker,
-        Blackball,
-        ChineseEightBall,
-        Other
+        //TenBall,
+        //StraightPool,
+        //OnePocket,
+        //BankPool,
+        //Rotation,
+        //Snooker,
+        //Blackball,
+        //ChineseEightBall,
+        //Other
     }
 }

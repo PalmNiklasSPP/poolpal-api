@@ -28,14 +28,15 @@ var connectionString = builder.Configuration.GetConnectionString("PoolTournament
 builder.Services.AddDbContext<PoolTournamentContext>(options =>
     options.UseSqlServer(connectionString));
 
-builder.Services.AddAuthentication(IISDefaults.AuthenticationScheme);
+builder.Services.AddAuthentication(IISDefaults.AuthenticationScheme).AddNegotiate();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
     {
         builder.WithOrigins("http://localhost:5173") // Change this to specify allowed origins
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 builder.Services.AddAuthorization(options =>
