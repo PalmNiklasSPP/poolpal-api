@@ -15,7 +15,7 @@ namespace poolpal_api.Controllers
     public class MatchesController(PoolTournamentContext context) : ControllerBase
     {
         // POST: api/Matches/Create
-        [HttpPost("Create")]
+        [HttpPost("CreateMatch")]
         public IActionResult CreateMatch([FromBody] CreateMatchRequest match)
         {
             if (match == null)
@@ -26,7 +26,7 @@ namespace poolpal_api.Controllers
 
             var newMatch = new Match
             {
-                MatchDate = match.Date,
+                MatchDate = DateTime.Parse(match.Date),
                 Notes = match.Notes,
                 PoolGameType = (PoolGameType)match.PoolGameType,
                 TournamentId = match.TournamentId
@@ -37,6 +37,29 @@ namespace poolpal_api.Controllers
 
             return Ok(match);
         }
+        [HttpPost("CreateMatchAndAddPlayers")]
+        public IActionResult CreateMatchAndAddPlayers([FromBody] CreateMatchRequest match)
+        {
+            if (match == null)
+            {
+                return BadRequest();
+            }
+
+
+            var newMatch = new Match
+            {
+                MatchDate = DateTime.Parse(match.Date),
+                Notes = match.Notes,
+                PoolGameType = (PoolGameType)match.PoolGameType,
+                TournamentId = match.TournamentId
+            };
+
+            context.Matches.Add(newMatch);
+            context.SaveChanges();
+
+            return Ok(match);
+        }
+
 
         // POST: api/Matches/AddPlayerToMatch
         [HttpPost("AddPlayerToMatch")]
