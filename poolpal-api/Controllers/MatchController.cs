@@ -35,6 +35,8 @@ namespace poolpal_api.Controllers
             context.Matches.Add(newMatch);
             context.SaveChanges();
 
+            
+
             return Ok(match);
         }
         [HttpPost("CreateMatchAndAddPlayers")]
@@ -56,6 +58,22 @@ namespace poolpal_api.Controllers
 
             context.Matches.Add(newMatch);
             context.SaveChanges();
+
+
+            if (match.Player1.HasValue)
+            {
+                AddPlayerToMatch(newMatch.MatchId, match.Player1.Value);
+            }
+
+            if (match.Player2.HasValue)
+            {
+                AddPlayerToMatch(newMatch.MatchId, match.Player2.Value);
+            }
+
+            if (match.WinnerId.HasValue)
+            {
+                RecordResult(newMatch.MatchId, match.WinnerId.Value);
+            }
 
             return Ok(match);
         }
