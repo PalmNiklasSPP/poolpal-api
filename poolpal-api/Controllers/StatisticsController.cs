@@ -19,10 +19,13 @@ namespace poolpal_api.Controllers
             return leaderboardEntries;
         }
         [HttpGet("GetPlayerMatches")]
-        public IEnumerable<Match> GetRecentGames(string user, int? numberOfGames)
+        public IEnumerable<MatchStatistics> GetRecentGames(string user, int? numberOfGames)
         {
             // Assuming 'numberOfGames' can be null, we set a default value if it's not provided.
             int gamesToTake = numberOfGames ?? int.MaxValue; // If numberOfGames is null, fetch as many games as possible.
+
+            var matchIDs = context.PlayerMatches
+                .Select(pm => pm.Player.LoginId == user).ToList();
 
             // Combine queries to fetch the recent games for the specified user directly.
             var recentGames = context.Matches
@@ -31,10 +34,22 @@ namespace poolpal_api.Controllers
                     .SingleOrDefault()
                     .PlayerId))
                 .OrderByDescending(m => m.MatchDate)
-                .Take(gamesToTake) // Limit the number of games fetched based on 'numberOfGames'.
+                .Take(gamesToTake) // Limit the number of games fetched based on 'numberOfGames'
                 .ToList();
 
-            return recentGames;
+
+
+            var matchStatistics = recentGames.Select(game => new MatchStatistics
+            {
+                MatchDate = game.MatchDate.ToString("yyyy-MM-dd"),
+                Opponent = "RIP",
+                isWinner = true,
+                Winner = "RIP",
+                TournamentFormat = game.PoolGameType,
+                EloChange = 0
+            }).ToList();
+
+            return new List<MatchStatistics>();
         }
     }
 }
