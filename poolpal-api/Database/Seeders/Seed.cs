@@ -19,8 +19,18 @@ namespace poolpal_api.Database.Seeders
         {
             var data = new Player[]
             {
-                new() { PlayerId = 1, PlayerName = "Player 1", LoginId = "STB\\NIPA01", ELO = 1400},
-                new() { PlayerId = 2, PlayerName = "Player 2", LoginId = "STB\\TIAL01", ELO = 1600},
+                new() { PlayerId = 1, PlayerName = "NickeP", LoginId = "STB\\NIPA01" },
+                new() { PlayerId = 2, PlayerName = "Timmy", LoginId = "STB\\TIAL01" },
+                new() { PlayerId = 3, PlayerName = "John Doe", LoginId = "login1", ELO = 2000 },
+                new() { PlayerId = 4, PlayerName = "Johnathan Doe", LoginId = "login2", ELO = 950 },
+                new() { PlayerId = 5, PlayerName = "Johnny Dough", LoginId = "login3", ELO = 900 },
+                new() { PlayerId = 6, PlayerName = "Jon Doe", LoginId = "login4", ELO = 850 },
+                new() { PlayerId = 7, PlayerName = "Johannes Doe", LoginId = "login5", ELO = 800 },
+                new() { PlayerId = 8, PlayerName = "John D.", LoginId = "login6", ELO = 750 },
+                new() { PlayerId = 9, PlayerName = "Jonny Doe", LoginId = "login7", ELO = 700 },
+                new() { PlayerId = 10, PlayerName = "J. Doe", LoginId = "login8", ELO = 650 },
+                new() { PlayerId = 11, PlayerName = "John Do", LoginId = "login9", ELO = 600 },
+                new() { PlayerId = 12, PlayerName = "Jonathan Doe", LoginId = "login10", ELO = 550 }
             };
             mb.Entity<Player>().HasData(data);
         }
@@ -41,12 +51,12 @@ namespace poolpal_api.Database.Seeders
         {
             var data = new PlayerMatch[]
             {
-                new() { PlayerId = 1, MatchId = 1, Score = 5, IsWinner = true},
-                new() { PlayerId = 2, MatchId = 1, Score = 3, IsWinner = false},
-                new() { PlayerId = 1, MatchId = 2, Score = 5, IsWinner = true},
-                new() { PlayerId = 2, MatchId = 2, Score = 3, IsWinner = false},
-                new() { PlayerId = 1, MatchId = 3, Score = 5, IsWinner = true},
-                new() { PlayerId = 2, MatchId = 3, Score = 3, IsWinner = false},
+                new() { PlayerId = 1, MatchId = 1,  IsWinner = true},
+                new() { PlayerId = 2, MatchId = 1, IsWinner = false},
+                new() { PlayerId = 1, MatchId = 2, IsWinner = true},
+                new() { PlayerId = 2, MatchId = 2,  IsWinner = false},
+                new() { PlayerId = 1, MatchId = 3,  IsWinner = true},
+                new() { PlayerId = 2, MatchId = 3,IsWinner = false},
             };
             mb.Entity<PlayerMatch>().HasData(data);
         }
