@@ -19,8 +19,8 @@ namespace poolpal_api.Database.Seeders
         {
             var data = new Player[]
             {
-                new() { PlayerId = 1, PlayerName = "Player 1", LoginId = "STB\\NIPA01", RankingPoints = 100},
-                new() { PlayerId = 2, PlayerName = "Player 2", LoginId = "STB\\TIAL01", RankingPoints = 200},
+                new() { PlayerId = 1, PlayerName = "Player 1", LoginId = "STB\\NIPA01", ELO = 1400},
+                new() { PlayerId = 2, PlayerName = "Player 2", LoginId = "STB\\TIAL01", ELO = 1600},
             };
             mb.Entity<Player>().HasData(data);
         }

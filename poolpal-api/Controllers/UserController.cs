@@ -39,7 +39,7 @@ namespace poolpal_api.Controllers
                 {
                     PlayerName = userPrincipal.DisplayName,
                     LoginId = userName,
-                    RankingPoints = 0 // Default value, adjust as needed
+                    ELO = 1500 // Default value, adjust as needed
                 };
 
                 // Add to database and save
