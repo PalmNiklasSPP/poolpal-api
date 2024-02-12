@@ -6,7 +6,7 @@
         public string PlayerName { get; set; }
         public int TotalWins { get; set; }
         public int TotalLosses { get; set; }
-        public int RankingPoints { get; set; }
+        public int ELO { get; set; }
     }
 
 }

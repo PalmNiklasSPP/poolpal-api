@@ -15,7 +15,7 @@ namespace poolpal_api.Controllers
         [HttpGet("GetLeaderboard")]
         public IEnumerable<LeaderboardEntry> GetLeaderboard()
         {
-            var leaderboardEntries = context.LeaderboardEntries.OrderByDescending(x => x.RankingPoints).ToList();
+            var leaderboardEntries = context.LeaderboardEntries.OrderByDescending(x => x.ELO).ToList();
             return leaderboardEntries;
         }
         [HttpGet("GetPlayerMatches")]

@@ -36,6 +36,7 @@ builder.Services.AddDbContext<PoolTournamentContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddAuthentication(IISDefaults.AuthenticationScheme).AddNegotiate();
+builder.Services.AddMemoryCache();
 
 builder.Services.AddAuthorization(options =>
 {
