@@ -53,7 +53,7 @@ namespace poolpal_api.Controllers
             {
                 MatchID = game.MatchId,
                 MatchDate = game.MatchDate.ToString("yyyy-MM-dd"),
-                Opponents = opponentsForMatches.TryGetValue(game.MatchId, out var opponents) ? string.Join(",", opponents) : "Missing opponents",
+                Opponents = opponentsForMatches.TryGetValue(game.MatchId, out var opponents) ? string.Join(", ", opponents) : "Missing opponents",
                 isWinner = game.PlayerMatches.Any(pm => pm.IsWinner && pm.PlayerId == playerID.Value),
                 Winner = GetWinnerFromMatch(game.MatchId),
                 TournamentFormat = game.PoolGameType,
