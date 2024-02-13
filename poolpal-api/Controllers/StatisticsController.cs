@@ -1,16 +1,19 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using poolpal_api.Database;
 using poolpal_api.Database.Entities;
 using poolpal_api.Models.PoolTournamentApi.Models;
 using poolpal_api.Models.RequestModels;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Principal;
 
 namespace poolpal_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StatisticsController(PoolTournamentContext context) : ControllerBase {
+    public class StatisticsController(PoolTournamentContext context) : ControllerBase
+    {
 
         [HttpGet("GetLeaderboard")]
         public IEnumerable<LeaderboardEntry> GetLeaderboard()
@@ -19,22 +22,74 @@ namespace poolpal_api.Controllers
             return leaderboardEntries;
         }
         [HttpGet("GetPlayerMatches")]
-        public IEnumerable<Match> GetRecentGames(string user, int? numberOfGames)
+        public IEnumerable<MatchStatistics> GetRecentGames(string user, int numberOfGames = int.MaxValue)
         {
-            // Assuming 'numberOfGames' can be null, we set a default value if it's not provided.
-            int gamesToTake = numberOfGames ?? int.MaxValue; // If numberOfGames is null, fetch as many games as possible.
+            var playerID = context.Players
+                .SingleOrDefault(player => player.LoginId == user)?.PlayerId;
+
+            if (!playerID.HasValue)
+            {
+                throw new ArgumentException($"No player with loginID {user} exists");
+            }
+
+            var matchIDs = context.PlayerMatches
+                .AsNoTracking()
+                .Where(pm => pm.PlayerId == playerID.Value)
+                .Select(pm => pm.MatchId)
+                .ToList();
 
             // Combine queries to fetch the recent games for the specified user directly.
             var recentGames = context.Matches
-                .Where(m => m.PlayerMatches.Any(pm => pm.Player.PlayerId == context.Players
-                    .Where(p => p.LoginId == user)
-                    .SingleOrDefault()
-                    .PlayerId))
+                .Include(pm => pm.PlayerMatches)
+                .AsNoTracking()
+                .Where(m => matchIDs.Contains(m.MatchId))
                 .OrderByDescending(m => m.MatchDate)
-                .Take(gamesToTake) // Limit the number of games fetched based on 'numberOfGames'.
+                .Take(numberOfGames) // Limit the number of games fetched based on 'numberOfGames
                 .ToList();
 
-            return recentGames;
+            var opponentsForMatches = GetOpponentsNameFromMatch(playerID.Value, matchIDs);
+
+            var matchStatistics = recentGames.Select(game => new MatchStatistics
+            {
+                MatchID = game.MatchId,
+                MatchDate = game.MatchDate.ToString("yyyy-MM-dd"),
+                Opponents = opponentsForMatches.TryGetValue(game.MatchId, out var opponents) ? string.Join(",", opponents) : "Missing opponents",
+                isWinner = game.PlayerMatches.Any(pm => pm.IsWinner && pm.PlayerId == playerID.Value),
+                Winner = GetWinnerFromMatch(game.MatchId),
+                TournamentFormat = game.PoolGameType,
+                EloChange = game.PlayerMatches.SingleOrDefault(pm => pm.PlayerId == playerID.Value)?.EloChange ?? 0
+            }).ToList();
+
+            return matchStatistics;
+
+
         }
+        #region Private methods
+
+        private Dictionary<int, List<string?>> GetOpponentsNameFromMatch(int playerId, ICollection<int> matchID)
+        {
+
+            var opponentPlayer = context.PlayerMatches
+                .Include(pm => pm.Player)
+                .AsNoTracking()
+                .Where(pm => matchID.Contains(pm.MatchId) && pm.PlayerId != playerId)
+               .GroupBy(pm => pm.MatchId)
+                .ToDictionary(k => k.Key, k => k.Select(pm => pm.Player?.PlayerName).ToList());
+
+            return opponentPlayer;
+        }
+
+        private string GetWinnerFromMatch(int matchId)
+        {
+            string winner = context.PlayerMatches
+                .AsNoTracking()
+                .Where(pm => pm.MatchId == matchId && pm.IsWinner)
+                .Select(pm => pm.Player.LoginId)
+                .FirstOrDefault();
+
+            return winner;
+        }
+
+        #endregion
     }
 }

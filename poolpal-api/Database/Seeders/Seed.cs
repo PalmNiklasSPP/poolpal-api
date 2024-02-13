@@ -53,8 +53,8 @@ namespace poolpal_api.Database.Seeders
             {
                 new() { PlayerId = 1, MatchId = 1,  IsWinner = true},
                 new() { PlayerId = 2, MatchId = 1, IsWinner = false},
-                new() { PlayerId = 1, MatchId = 2, IsWinner = true},
-                new() { PlayerId = 2, MatchId = 2,  IsWinner = false},
+                new() { PlayerId = 1, MatchId = 2, IsWinner = false},
+                new() { PlayerId = 2, MatchId = 2,  IsWinner = true},
                 new() { PlayerId = 1, MatchId = 3,  IsWinner = true},
                 new() { PlayerId = 2, MatchId = 3,IsWinner = false},
             };
