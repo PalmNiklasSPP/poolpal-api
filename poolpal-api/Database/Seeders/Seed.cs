@@ -7,20 +7,35 @@ namespace poolpal_api.Database.Seeders
 {
     public class Seed
     {
+        private const string Desc =
+            "Introducing NickeP, a master of precision and strategy on the pool table. Known for exceptional cue control and tactical gameplay, NickeP brings a unique blend of focus and flair to every match. With numerous victories under their belt, NickeP is a formidable opponent and a crowd favorite. Watch as NickeP lines up their shots, showcasing a perfect blend of skill and style.";
         public static void DoSeed(ModelBuilder mb)
         {
+            SeedSppTeam(mb);
             SeedPlayers(mb);
             SeedTournaments(mb);
             SeedMatches(mb);
             SeedPlayerMatches(mb);
         }
 
+        private static void SeedSppTeam(ModelBuilder mb)
+        {
+            var data = new SppTeam[]
+            {
+                new() { Id = 1, ShortName = "BoB", FullName = "Business & Broker", OrganisationUnit = OrganisationUnit.Tech},
+                new() { Id = 2, ShortName = "PW", FullName = "Private Web", OrganisationUnit = OrganisationUnit.Tech},
+                new() { Id = 99, ShortName = "Other", FullName = "Other", OrganisationUnit = OrganisationUnit.Other},
+            };
+            mb.Entity<SppTeam>().HasData(data);
+
+        }
+
         private static void SeedPlayers(ModelBuilder mb)
         {
             var data = new Player[]
             {
-                new() { PlayerId = 1, PlayerName = "NickeP", LoginId = "STB\\NIPA01" },
-                new() { PlayerId = 2, PlayerName = "Timmy", LoginId = "STB\\TIAL01" },
+                new() { PlayerId = 1, PlayerName = "NickeP", LoginId = "STB\\NIPA01",Description = Desc, SppTeamId = 1},
+                new() { PlayerId = 2, PlayerName = "Timmy", LoginId = "STB\\TIAL01", SppTeamId = 1},
                 new() { PlayerId = 3, PlayerName = "John Doe", LoginId = "login1", ELO = 2000 },
                 new() { PlayerId = 4, PlayerName = "Johnathan Doe", LoginId = "login2", ELO = 950 },
                 new() { PlayerId = 5, PlayerName = "Johnny Dough", LoginId = "login3", ELO = 900 },
@@ -34,6 +49,8 @@ namespace poolpal_api.Database.Seeders
             };
             mb.Entity<Player>().HasData(data);
         }
+
+   
 
         private static void SeedMatches(ModelBuilder mb)
         {

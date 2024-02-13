@@ -19,6 +19,8 @@ namespace poolpal_api.Database
         public DbSet<PlayerMatch> PlayerMatches { get; set; }
         public DbSet<LeaderboardEntry> LeaderboardEntries { get; set; }
 
+        public DbSet<SppTeam> SppTeams { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,9 +35,9 @@ namespace poolpal_api.Database
             // Match configuration
             modelBuilder.Entity<Match>()
                 .HasKey(m => m.MatchId);
-               modelBuilder.Entity<Match>()
-                  .Property(m => m.PoolGameType)
-                  .HasConversion<string>();
+            modelBuilder.Entity<Match>()
+               .Property(m => m.PoolGameType)
+               .HasConversion<string>();
 
             // Player configuration
             modelBuilder.Entity<Player>()
@@ -55,6 +57,15 @@ namespace poolpal_api.Database
                 .HasOne(pm => pm.Match)
                 .WithMany(m => m.PlayerMatches)
                 .HasForeignKey(pm => pm.MatchId);
+
+            modelBuilder.Entity<SppTeam>()
+                .HasKey(x => x.Id);
+
+            modelBuilder.Entity<SppTeam>()
+                .Property(x => x.OrganisationUnit)
+                .HasConversion<string>();
+
+
 
             modelBuilder.Entity<LeaderboardEntry>().ToView("Leaderboard").HasNoKey();
 

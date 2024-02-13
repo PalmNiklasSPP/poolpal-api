@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using poolpal_api.Database;
 
@@ -11,9 +12,11 @@ using poolpal_api.Database;
 namespace poolpal_api.Migrations
 {
     [DbContext(typeof(PoolTournamentContext))]
-    partial class PoolTournamentContextModelSnapshot : ModelSnapshot
+    [Migration("20240212133411_SppTeam")]
+    partial class SppTeam
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -102,9 +105,6 @@ namespace poolpal_api.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PlayerId"));
-
-                    b.Property<string>("Avatar")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -256,13 +256,6 @@ namespace poolpal_api.Migrations
                             FullName = "Private Web",
                             OrganisationUnit = "Tech",
                             ShortName = "PW"
-                        },
-                        new
-                        {
-                            Id = 99,
-                            FullName = "Other",
-                            OrganisationUnit = "Other",
-                            ShortName = "Other"
                         });
                 });
 
