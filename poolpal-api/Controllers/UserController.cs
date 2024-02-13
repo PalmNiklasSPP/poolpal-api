@@ -8,6 +8,7 @@ using poolpal_api.Database;
 using System.Security.Principal;
 using poolpal_api.Database.Entities;
 using Microsoft.Extensions.Caching.Memory;
+using poolpal_api.Models.RequestModels;
 
 namespace poolpal_api.Controllers
 {
@@ -25,7 +26,7 @@ namespace poolpal_api.Controllers
             var userName = windowsIdentity.Name;
 
             // Check if user is in database
-            var user = await context.Players.FirstOrDefaultAsync(p => p.LoginId == userName);
+            var user = await context.Players.AsNoTracking().Include(x => x.SppTeam).FirstOrDefaultAsync(p => p.LoginId == userName);
             if (user != null) return user;
 
 
@@ -84,6 +85,44 @@ namespace poolpal_api.Controllers
             }
 
             return players;
+        }
+
+
+
+        [HttpGet("GetAllSppTeam")]
+        public async Task<IEnumerable<SppTeam>> GetAllSppTeams()
+        {
+            var teams = await context.SppTeams.ToListAsync();
+            return teams;
+        }
+
+
+        //Update user settings
+        [HttpPut("UpdateUserSettings")]
+        public async Task<ActionResult<Player>> UpdateUserSettings(int playerId, UpdateUserRequest userSettings)
+        {
+            var user = await context.Players.FirstOrDefaultAsync(p => p.PlayerId == playerId);
+            if (user == null) return NotFound("User not found");
+
+            user.PlayerName = userSettings?.PlayerName ?? user.PlayerName;
+            user.Description = userSettings?.Description ?? user.Description;
+            user.SppTeamId = userSettings?.SppTeamId ?? user.SppTeamId;
+
+            await context.SaveChangesAsync();
+            return user;
+        }
+
+        //Update user avatar
+        [HttpPut("UpdateUserAvatar")]
+        public async Task<ActionResult<Player>> UpdateUserAvatar(int playerId, string avatar)
+        {
+            var user = await context.Players.FirstOrDefaultAsync(p => p.PlayerId == playerId);
+            if (user == null) return NotFound("User not found");
+
+            user.Avatar = avatar;
+
+            await context.SaveChangesAsync();
+            return user;
         }
     }
 
