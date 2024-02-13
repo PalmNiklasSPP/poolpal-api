@@ -62,6 +62,7 @@ namespace poolpal_api.Controllers
 
             if (match.Player1.HasValue)
             {
+
                 AddPlayerToMatch(newMatch.MatchId, match.Player1.Value);
             }
 
@@ -78,10 +79,9 @@ namespace poolpal_api.Controllers
             return Ok(match);
         }
 
-
         // POST: api/Matches/AddPlayerToMatch
         [HttpPost("AddPlayerToMatch")]
-        public IActionResult AddPlayerToMatch(int matchId, int playerId)
+        public IActionResult AddPlayerToMatch(int matchId, int playerId, int eloChange = 0)
         {
             var match = context.Matches.Find(matchId);
             var player = context.Players.Find(playerId);
@@ -95,7 +95,7 @@ namespace poolpal_api.Controllers
             {
                 PlayerId = playerId,
                 MatchId = matchId,
-                Score = 0, // Default score, update later
+                Score = eloChange, // Default score, update later
                 IsWinner = false // Default winner status, update later
             };
 
@@ -110,6 +110,8 @@ namespace poolpal_api.Controllers
         public IActionResult RecordResult(int matchId, int winnerPlayerId)
         {
             var match = context.Matches.Include(m => m.PlayerMatches).FirstOrDefault(m => m.MatchId == matchId);
+            int[] playerNewElo = new int[2];
+            int matchIndex = 0;
 
             if (match == null)
             {
@@ -127,12 +129,39 @@ namespace poolpal_api.Controllers
 
             foreach (var playerMatch in match.PlayerMatches)
             {
-                playerMatch.IsWinner = playerMatch.PlayerId == winnerPlayerId;
+                bool isWinner = playerMatch.PlayerId == winnerPlayerId;
+                //TODO Get player ELO, Calculate and set new elo and record elo change
+                int opponentElo = match.PlayerMatches
+                    .Where(pm => pm.PlayerId != playerMatch.PlayerId)
+                    .Select(pm => pm.Player.ELO)
+                    .FirstOrDefault();
+                playerNewElo[matchIndex] = CalculateNewPlayerElo(playerMatch.Player.ELO,opponentElo,winner: playerMatch.IsWinner);
+                playerMatch.EloChange = playerNewElo[matchIndex] - playerMatch.Player.ELO;
+                playerMatch.IsWinner = isWinner;
+                matchIndex++;
+            }
+
+            matchIndex = 0;
+
+            foreach(var playerMatch in match.PlayerMatches)
+            {
+                playerMatch.Player.ELO = playerNewElo[matchIndex];
+                matchIndex++;
             }
 
             context.SaveChanges();
 
             return Ok(match);
+        }
+
+        int CalculateNewPlayerElo(int playerElo, int opponentElo,bool winner = false, int kValue = 30, bool draw = false)
+        {
+            float winnerValue = winner ? 1 : 0;
+            winnerValue = draw ? 0.5f : winnerValue;
+            double playerExpectedElo = 1 /(1+ Math.Pow(10,(opponentElo-playerElo)/400));
+            int newPlayerRating = (int) Math.Round(playerElo + kValue * (winnerValue - playerExpectedElo));
+
+            return newPlayerRating;
         }
     }
 
