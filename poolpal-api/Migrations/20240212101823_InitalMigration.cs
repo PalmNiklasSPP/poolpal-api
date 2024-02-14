@@ -112,34 +112,34 @@ namespace poolpal_api.Migrations
 
             var sql = @"
             CREATE VIEW Leaderboard AS
-            WITH LossesCTE AS (
-                SELECT
-                    pm.PlayerId,
-                    COUNT(*) AS Losses
-                FROM
-                    PlayerMatches pm
-                WHERE
-                    pm.IsWinner = 0 AND EXISTS (
-                        SELECT 1 FROM PlayerMatches pm2 
-                        WHERE pm2.MatchID = pm.MatchID AND pm2.IsWinner = 1
-                    )
-                GROUP BY
-                    pm.PlayerId
-            )
-            SELECT
-                p.PlayerId,
-                p.PlayerName,
-                SUM(CASE WHEN pm.IsWinner = 1 THEN 1 ELSE 0 END) AS TotalWins,
-                ISNULL(l.Losses, 0) AS TotalLosses,
-                SUM(p.ELO) AS ELO
-            FROM
-                Players p
-            LEFT JOIN
-                PlayerMatches pm ON p.PlayerId = pm.PlayerId
-            LEFT JOIN
-                LossesCTE l ON p.PlayerId = l.PlayerId
-            GROUP BY
-                p.PlayerId, p.PlayerName, l.Losses;";
+     WITH LossesCTE AS (
+         SELECT
+             pm.PlayerId,
+             COUNT(*) AS Losses
+         FROM
+             PlayerMatches pm
+         WHERE
+             pm.IsWinner = 0 AND EXISTS (
+                 SELECT 1 FROM PlayerMatches pm2 
+                 WHERE pm2.MatchID = pm.MatchID AND pm2.IsWinner = 1
+             )
+         GROUP BY
+             pm.PlayerId
+     )
+     SELECT
+         p.PlayerId,
+         p.PlayerName,
+         SUM(CASE WHEN pm.IsWinner = 1 THEN 1 ELSE 0 END) AS TotalWins,
+         ISNULL(l.Losses, 0) AS TotalLosses,
+         p.ELO AS ELO
+     FROM
+         Players p
+     LEFT JOIN
+         PlayerMatches pm ON p.PlayerId = pm.PlayerId
+     LEFT JOIN
+         LossesCTE l ON p.PlayerId = l.PlayerId
+     GROUP BY
+         p.PlayerId, p.PlayerName, l.Losses, p.ELO;";
 
             migrationBuilder.Sql(sql);
 
