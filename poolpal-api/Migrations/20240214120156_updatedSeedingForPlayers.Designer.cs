@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using poolpal_api.Database;
 
@@ -11,9 +12,11 @@ using poolpal_api.Database;
 namespace poolpal_api.Migrations
 {
     [DbContext(typeof(PoolTournamentContext))]
-    partial class PoolTournamentContextModelSnapshot : ModelSnapshot
+    [Migration("20240214120156_updatedSeedingForPlayers")]
+    partial class updatedSeedingForPlayers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,9 +56,6 @@ namespace poolpal_api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MatchId"));
 
-                    b.Property<int?>("GroupId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("MatchDate")
                         .HasColumnType("datetime2");
 
@@ -70,8 +70,6 @@ namespace poolpal_api.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("MatchId");
-
-                    b.HasIndex("GroupId");
 
                     b.HasIndex("TournamentId");
 
@@ -97,34 +95,6 @@ namespace poolpal_api.Migrations
                             MatchId = 3,
                             MatchDate = new DateTime(2024, 1, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PoolGameType = "EightBall"
-                        },
-                        new
-                        {
-                            MatchId = 4,
-                            MatchDate = new DateTime(2024, 1, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            PoolGameType = "EightBall",
-                            TournamentId = 1
-                        },
-                        new
-                        {
-                            MatchId = 5,
-                            MatchDate = new DateTime(2024, 1, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            PoolGameType = "EightBall",
-                            TournamentId = 1
-                        },
-                        new
-                        {
-                            MatchId = 6,
-                            MatchDate = new DateTime(2024, 2, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            PoolGameType = "EightBall",
-                            TournamentId = 2
-                        },
-                        new
-                        {
-                            MatchId = 7,
-                            MatchDate = new DateTime(2024, 2, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            PoolGameType = "EightBall",
-                            TournamentId = 2
                         });
                 });
 
@@ -299,55 +269,7 @@ namespace poolpal_api.Migrations
                         });
                 });
 
-            modelBuilder.Entity("poolpal_api.Database.Entities.Tournament.Group", b =>
-                {
-                    b.Property<int>("GroupId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GroupId"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TournamentId")
-                        .HasColumnType("int");
-
-                    b.HasKey("GroupId");
-
-                    b.HasIndex("TournamentId");
-
-                    b.ToTable("Groups");
-
-                    b.HasData(
-                        new
-                        {
-                            GroupId = 1,
-                            Name = "Group A",
-                            TournamentId = 1
-                        },
-                        new
-                        {
-                            GroupId = 2,
-                            Name = "Group B",
-                            TournamentId = 1
-                        },
-                        new
-                        {
-                            GroupId = 3,
-                            Name = "Group C",
-                            TournamentId = 2
-                        },
-                        new
-                        {
-                            GroupId = 4,
-                            Name = "Group D",
-                            TournamentId = 2
-                        });
-                });
-
-            modelBuilder.Entity("poolpal_api.Database.Entities.Tournament.Tournament", b =>
+            modelBuilder.Entity("poolpal_api.Database.Entities.Tournament", b =>
                 {
                     b.Property<int>("TournamentId")
                         .ValueGeneratedOnAdd()
@@ -355,17 +277,10 @@ namespace poolpal_api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TournamentId"));
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Format")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GameType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -376,22 +291,13 @@ namespace poolpal_api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OrganiserId")
-                        .HasColumnType("int");
-
                     b.Property<int>("ParticipantLimit")
                         .HasColumnType("int");
-
-                    b.Property<string>("ParticipationType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("TournamentId");
-
-                    b.HasIndex("OrganiserId");
 
                     b.ToTable("Tournaments");
 
@@ -399,134 +305,12 @@ namespace poolpal_api.Migrations
                         new
                         {
                             TournamentId = 1,
-                            Description = "Description for Tournament 1",
-                            EndDate = new DateTime(2024, 1, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Format = "RoundRobin",
-                            GameType = "EightBall",
+                            EndDate = new DateTime(2021, 2, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Format = "SingleElimination",
                             IsTeamBased = false,
                             Name = "Tournament 1",
-                            OrganiserId = 1,
                             ParticipantLimit = 10,
-                            ParticipationType = "Open",
                             StartDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            TournamentId = 2,
-                            Description = "Description for Tournament 2",
-                            EndDate = new DateTime(2024, 2, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Format = "SingleElimination",
-                            GameType = "EightBall",
-                            IsTeamBased = false,
-                            Name = "Tournament 2",
-                            OrganiserId = 1,
-                            ParticipantLimit = 8,
-                            ParticipationType = "Open",
-                            StartDate = new DateTime(2024, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
-                });
-
-            modelBuilder.Entity("poolpal_api.Database.Entities.Tournament.TournamentRegistration", b =>
-                {
-                    b.Property<int>("RegistrationId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RegistrationId"));
-
-                    b.Property<int?>("GroupId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TournamentId")
-                        .HasColumnType("int");
-
-                    b.HasKey("RegistrationId");
-
-                    b.HasIndex("GroupId");
-
-                    b.HasIndex("PlayerId");
-
-                    b.HasIndex("TournamentId");
-
-                    b.ToTable("TournamentRegistrations");
-
-                    b.HasData(
-                        new
-                        {
-                            RegistrationId = 1,
-                            PlayerId = 1,
-                            Status = "Confirmed",
-                            TournamentId = 1
-                        },
-                        new
-                        {
-                            RegistrationId = 2,
-                            PlayerId = 2,
-                            Status = "Confirmed",
-                            TournamentId = 1
-                        },
-                        new
-                        {
-                            RegistrationId = 3,
-                            PlayerId = 3,
-                            Status = "Confirmed",
-                            TournamentId = 1
-                        },
-                        new
-                        {
-                            RegistrationId = 4,
-                            PlayerId = 4,
-                            Status = "Pending",
-                            TournamentId = 1
-                        },
-                        new
-                        {
-                            RegistrationId = 5,
-                            PlayerId = 6,
-                            Status = "Confirmed",
-                            TournamentId = 1
-                        },
-                        new
-                        {
-                            RegistrationId = 6,
-                            PlayerId = 7,
-                            Status = "Confirmed",
-                            TournamentId = 1
-                        },
-                        new
-                        {
-                            RegistrationId = 7,
-                            PlayerId = 8,
-                            Status = "Confirmed",
-                            TournamentId = 1
-                        },
-                        new
-                        {
-                            RegistrationId = 8,
-                            PlayerId = 9,
-                            Status = "Confirmed",
-                            TournamentId = 1
-                        },
-                        new
-                        {
-                            RegistrationId = 9,
-                            PlayerId = 7,
-                            Status = "Confirmed",
-                            TournamentId = 2
-                        },
-                        new
-                        {
-                            RegistrationId = 10,
-                            PlayerId = 8,
-                            Status = "Confirmed",
-                            TournamentId = 2
                         });
                 });
 
@@ -606,16 +390,9 @@ namespace poolpal_api.Migrations
 
             modelBuilder.Entity("poolpal_api.Database.Entities.Match", b =>
                 {
-                    b.HasOne("poolpal_api.Database.Entities.Tournament.Group", "Group")
+                    b.HasOne("poolpal_api.Database.Entities.Tournament", "Tournament")
                         .WithMany("Matches")
-                        .HasForeignKey("GroupId");
-
-                    b.HasOne("poolpal_api.Database.Entities.Tournament.Tournament", "Tournament")
-                        .WithMany("Matches")
-                        .HasForeignKey("TournamentId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Group");
+                        .HasForeignKey("TournamentId");
 
                     b.Navigation("Tournament");
                 });
@@ -627,53 +404,6 @@ namespace poolpal_api.Migrations
                         .HasForeignKey("SppTeamId");
 
                     b.Navigation("SppTeam");
-                });
-
-            modelBuilder.Entity("poolpal_api.Database.Entities.Tournament.Group", b =>
-                {
-                    b.HasOne("poolpal_api.Database.Entities.Tournament.Tournament", "Tournament")
-                        .WithMany("Groups")
-                        .HasForeignKey("TournamentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Tournament");
-                });
-
-            modelBuilder.Entity("poolpal_api.Database.Entities.Tournament.Tournament", b =>
-                {
-                    b.HasOne("poolpal_api.Database.Entities.Player", "Organiser")
-                        .WithMany()
-                        .HasForeignKey("OrganiserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Organiser");
-                });
-
-            modelBuilder.Entity("poolpal_api.Database.Entities.Tournament.TournamentRegistration", b =>
-                {
-                    b.HasOne("poolpal_api.Database.Entities.Tournament.Group", "Group")
-                        .WithMany("Participants")
-                        .HasForeignKey("GroupId");
-
-                    b.HasOne("poolpal_api.Database.Entities.Player", "Player")
-                        .WithMany()
-                        .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("poolpal_api.Database.Entities.Tournament.Tournament", "Tournament")
-                        .WithMany("Registrations")
-                        .HasForeignKey("TournamentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Group");
-
-                    b.Navigation("Player");
-
-                    b.Navigation("Tournament");
                 });
 
             modelBuilder.Entity("poolpal_api.Models.PoolTournamentApi.Models.PlayerMatch", b =>
@@ -705,20 +435,9 @@ namespace poolpal_api.Migrations
                     b.Navigation("PlayerMatches");
                 });
 
-            modelBuilder.Entity("poolpal_api.Database.Entities.Tournament.Group", b =>
+            modelBuilder.Entity("poolpal_api.Database.Entities.Tournament", b =>
                 {
                     b.Navigation("Matches");
-
-                    b.Navigation("Participants");
-                });
-
-            modelBuilder.Entity("poolpal_api.Database.Entities.Tournament.Tournament", b =>
-                {
-                    b.Navigation("Groups");
-
-                    b.Navigation("Matches");
-
-                    b.Navigation("Registrations");
                 });
 #pragma warning restore 612, 618
         }
