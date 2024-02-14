@@ -6,6 +6,7 @@ using poolpal_api.Database.Entities;
 using poolpal_api.Models;
 using poolpal_api.Models.PoolTournamentApi.Models;
 using poolpal_api.Models.RequestModels;
+using poolpal_api.Services;
 
 namespace poolpal_api.Controllers
 {
@@ -34,8 +35,6 @@ namespace poolpal_api.Controllers
 
             context.Matches.Add(newMatch);
             context.SaveChanges();
-
-            
 
             return Ok(match);
         }
@@ -127,15 +126,16 @@ namespace poolpal_api.Controllers
                 return BadRequest("A winner has already been set for this match.");
             }
 
+            //TODO: Make it not ugly
             foreach (var playerMatch in match.PlayerMatches)
             {
                 bool isWinner = playerMatch.PlayerId == winnerPlayerId;
-                //TODO Get player ELO, Calculate and set new elo and record elo change
                 int opponentElo = match.PlayerMatches
                     .Where(pm => pm.PlayerId != playerMatch.PlayerId)
                     .Select(pm => pm.Player.ELO)
                     .FirstOrDefault();
-                playerNewElo[matchIndex] = CalculateNewPlayerElo(playerMatch.Player.ELO,opponentElo,winner: playerMatch.IsWinner);
+
+                playerNewElo[matchIndex] = EloService.CalculateNewPlayerElo(playerMatch.Player.ELO,opponentElo,winner: isWinner);
                 playerMatch.EloChange = playerNewElo[matchIndex] - playerMatch.Player.ELO;
                 playerMatch.IsWinner = isWinner;
                 matchIndex++;
@@ -152,16 +152,6 @@ namespace poolpal_api.Controllers
             context.SaveChanges();
 
             return Ok(match);
-        }
-
-        int CalculateNewPlayerElo(int playerElo, int opponentElo,bool winner = false, int kValue = 30, bool draw = false)
-        {
-            float winnerValue = winner ? 1 : 0;
-            winnerValue = draw ? 0.5f : winnerValue;
-            double playerExpectedElo = 1 /(1+ Math.Pow(10,(opponentElo-playerElo)/400));
-            int newPlayerRating = (int) Math.Round(playerElo + kValue * (winnerValue - playerExpectedElo));
-
-            return newPlayerRating;
         }
     }
 
