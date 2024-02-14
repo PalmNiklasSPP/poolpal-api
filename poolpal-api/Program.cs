@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using poolpal_api.Database;
+using poolpal_api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +48,8 @@ builder.Services.AddAuthorization(options =>
         policy.RequireAuthenticatedUser();
     });
 });
+builder.Services.AddScoped<ITournamentService, TournamentService>();
+builder.Services.AddScoped<IGroupGenerationService, GroupGenerationService>();
 
 var app = builder.Build();
 

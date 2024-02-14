@@ -134,6 +134,38 @@ namespace poolpal_api.Controllers
 
             return Ok(match);
         }
+
+        //Get recent matches
+        [HttpGet("GetRecentMatches")]
+        public IActionResult GetRecentMatches(int userId)
+        {
+            // Get the 10 most recent matches for the user
+            var matches = context.Matches
+                .Include(m => m.PlayerMatches)
+                .AsNoTracking()
+                .Where(m => m.PlayerMatches.Any(pm => pm.PlayerId == userId))
+                .OrderByDescending(m => m.MatchDate)
+                .Take(10)
+                .ToList();
+            return Ok(matches);
+        }
+
+
+        //Get Upcoming matches
+        [HttpGet("GetUpcomingMatches")]
+        public IActionResult GetUpcomingMatches(int userId)
+        {
+
+            var matches = context.Matches
+                .Include(m => m.PlayerMatches)
+                .ThenInclude(pm => pm.Player)
+                .Where(m => m.PlayerMatches.Any(pm => pm.PlayerId == userId) && m.MatchDate > DateTime.Now)
+                .OrderBy(m => m.MatchDate)
+                .Take(5)
+                .ToList();
+
+            return Ok(matches);
+        }
     }
 
 }
