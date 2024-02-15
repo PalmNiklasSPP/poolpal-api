@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using poolpal_api.Database;
 
@@ -11,9 +12,11 @@ using poolpal_api.Database;
 namespace poolpal_api.Migrations
 {
     [DbContext(typeof(PoolTournamentContext))]
-    partial class PoolTournamentContextModelSnapshot : ModelSnapshot
+    [Migration("20240214081249_tournament")]
+    partial class tournament
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,10 +59,7 @@ namespace poolpal_api.Migrations
                     b.Property<int?>("GroupId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("HasBeenPlayed")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("MatchDate")
+                    b.Property<DateTime>("MatchDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Notes")
@@ -84,7 +84,6 @@ namespace poolpal_api.Migrations
                         new
                         {
                             MatchId = 1,
-                            HasBeenPlayed = false,
                             MatchDate = new DateTime(2024, 1, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PoolGameType = "EightBall",
                             TournamentId = 1
@@ -92,7 +91,6 @@ namespace poolpal_api.Migrations
                         new
                         {
                             MatchId = 2,
-                            HasBeenPlayed = false,
                             MatchDate = new DateTime(2024, 1, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PoolGameType = "EightBall",
                             TournamentId = 1
@@ -100,14 +98,12 @@ namespace poolpal_api.Migrations
                         new
                         {
                             MatchId = 3,
-                            HasBeenPlayed = false,
                             MatchDate = new DateTime(2024, 1, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PoolGameType = "EightBall"
                         },
                         new
                         {
                             MatchId = 4,
-                            HasBeenPlayed = false,
                             MatchDate = new DateTime(2024, 1, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PoolGameType = "EightBall",
                             TournamentId = 1
@@ -115,7 +111,6 @@ namespace poolpal_api.Migrations
                         new
                         {
                             MatchId = 5,
-                            HasBeenPlayed = false,
                             MatchDate = new DateTime(2024, 1, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PoolGameType = "EightBall",
                             TournamentId = 1
@@ -123,7 +118,6 @@ namespace poolpal_api.Migrations
                         new
                         {
                             MatchId = 6,
-                            HasBeenPlayed = false,
                             MatchDate = new DateTime(2024, 2, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PoolGameType = "EightBall",
                             TournamentId = 2
@@ -131,7 +125,6 @@ namespace poolpal_api.Migrations
                         new
                         {
                             MatchId = 7,
-                            HasBeenPlayed = false,
                             MatchDate = new DateTime(2024, 2, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PoolGameType = "EightBall",
                             TournamentId = 2
@@ -174,7 +167,6 @@ namespace poolpal_api.Migrations
                         new
                         {
                             PlayerId = 1,
-                            Avatar = "/static/avatars/avatar-default.webp",
                             Description = "Introducing NickeP, a master of precision and strategy on the pool table. Known for exceptional cue control and tactical gameplay, NickeP brings a unique blend of focus and flair to every match. With numerous victories under their belt, NickeP is a formidable opponent and a crowd favorite. Watch as NickeP lines up their shots, showcasing a perfect blend of skill and style.",
                             ELO = 1500,
                             LoginId = "STB\\NIPA01",
@@ -184,7 +176,6 @@ namespace poolpal_api.Migrations
                         new
                         {
                             PlayerId = 2,
-                            Avatar = "/static/avatars/avatar-default.webp",
                             ELO = 1500,
                             LoginId = "STB\\TIAL01",
                             PlayerName = "Timmy",
@@ -193,7 +184,6 @@ namespace poolpal_api.Migrations
                         new
                         {
                             PlayerId = 3,
-                            Avatar = "/static/avatars/avatar-default.webp",
                             ELO = 2000,
                             LoginId = "login1",
                             PlayerName = "John Doe"
@@ -201,39 +191,34 @@ namespace poolpal_api.Migrations
                         new
                         {
                             PlayerId = 4,
-                            Avatar = "/static/avatars/avatar-default.webp",
-                            ELO = 1500,
+                            ELO = 950,
                             LoginId = "login2",
                             PlayerName = "Johnathan Doe"
                         },
                         new
                         {
                             PlayerId = 5,
-                            Avatar = "/static/avatars/avatar-default.webp",
-                            ELO = 1500,
+                            ELO = 900,
                             LoginId = "login3",
                             PlayerName = "Johnny Dough"
                         },
                         new
                         {
                             PlayerId = 6,
-                            Avatar = "/static/avatars/avatar-default.webp",
-                            ELO = 1500,
+                            ELO = 850,
                             LoginId = "login4",
                             PlayerName = "Jon Doe"
                         },
                         new
                         {
                             PlayerId = 7,
-                            Avatar = "/static/avatars/avatar-default.webp",
-                            ELO = 1500,
+                            ELO = 800,
                             LoginId = "login5",
                             PlayerName = "Johannes Doe"
                         },
                         new
                         {
                             PlayerId = 8,
-                            Avatar = "/static/avatars/avatar-default.webp",
                             ELO = 750,
                             LoginId = "login6",
                             PlayerName = "John D."
@@ -241,32 +226,28 @@ namespace poolpal_api.Migrations
                         new
                         {
                             PlayerId = 9,
-                            Avatar = "/static/avatars/avatar-default.webp",
-                            ELO = 1500,
+                            ELO = 700,
                             LoginId = "login7",
                             PlayerName = "Jonny Doe"
                         },
                         new
                         {
                             PlayerId = 10,
-                            Avatar = "/static/avatars/avatar-default.webp",
-                            ELO = 1500,
+                            ELO = 650,
                             LoginId = "login8",
                             PlayerName = "J. Doe"
                         },
                         new
                         {
                             PlayerId = 11,
-                            Avatar = "/static/avatars/avatar-default.webp",
-                            ELO = 1500,
+                            ELO = 600,
                             LoginId = "login9",
                             PlayerName = "John Do"
                         },
                         new
                         {
                             PlayerId = 12,
-                            Avatar = "/static/avatars/avatar-default.webp",
-                            ELO = 1500,
+                            ELO = 550,
                             LoginId = "login10",
                             PlayerName = "Jonathan Doe"
                         });
@@ -301,7 +282,6 @@ namespace poolpal_api.Migrations
                         new
                         {
                             Id = 1,
-                            Description = "Meet BoB: Where Business meets Brokers and billiards balls meet pockets! We're a team of tech aces and poolside tacticians. Whether it's tackling complex algorithms or tricky bank shots, our approach is all about precision, power, and a bit of playful banter. Get ready, competitors! In the digital and felt world, we're here to rack up successes, and pocket victories with a smile.",
                             FullName = "Business & Broker",
                             OrganisationUnit = "Tech",
                             ShortName = "BoB"
@@ -341,7 +321,7 @@ namespace poolpal_api.Migrations
 
                     b.HasIndex("TournamentId");
 
-                    b.ToTable("Groups");
+                    b.ToTable("Group");
 
                     b.HasData(
                         new
@@ -378,9 +358,6 @@ namespace poolpal_api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TournamentId"));
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
@@ -399,26 +376,16 @@ namespace poolpal_api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("OrganiserId")
-                        .HasColumnType("int");
-
                     b.Property<int>("ParticipantLimit")
                         .HasColumnType("int");
 
-                    b.Property<string>("ParticipationType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ParticipationType")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("TournamentId");
-
-                    b.HasIndex("OrganiserId");
 
                     b.ToTable("Tournaments");
 
@@ -426,32 +393,26 @@ namespace poolpal_api.Migrations
                         new
                         {
                             TournamentId = 1,
-                            Description = "Description for Tournament 1",
                             EndDate = new DateTime(2024, 1, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Format = "RoundRobin",
                             GameType = "EightBall",
                             IsTeamBased = false,
                             Name = "Tournament 1",
-                            OrganiserId = 1,
                             ParticipantLimit = 10,
-                            ParticipationType = "Open",
-                            StartDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = "Open"
+                            ParticipationType = 0,
+                            StartDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             TournamentId = 2,
-                            Description = "Description for Tournament 2",
                             EndDate = new DateTime(2024, 2, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Format = "SingleElimination",
                             GameType = "EightBall",
                             IsTeamBased = false,
                             Name = "Tournament 2",
-                            OrganiserId = 1,
                             ParticipantLimit = 8,
-                            ParticipationType = "Open",
-                            StartDate = new DateTime(2024, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = "Open"
+                            ParticipationType = 0,
+                            StartDate = new DateTime(2024, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -484,7 +445,7 @@ namespace poolpal_api.Migrations
 
                     b.HasIndex("TournamentId");
 
-                    b.ToTable("TournamentRegistrations");
+                    b.ToTable("TournamentRegistration");
 
                     b.HasData(
                         new
@@ -503,56 +464,14 @@ namespace poolpal_api.Migrations
                         },
                         new
                         {
-                            RegistrationId = 3,
-                            PlayerId = 3,
-                            Status = "Confirmed",
-                            TournamentId = 1
-                        },
-                        new
-                        {
-                            RegistrationId = 4,
-                            PlayerId = 4,
-                            Status = "Pending",
-                            TournamentId = 1
-                        },
-                        new
-                        {
-                            RegistrationId = 5,
-                            PlayerId = 6,
-                            Status = "Confirmed",
-                            TournamentId = 1
-                        },
-                        new
-                        {
-                            RegistrationId = 6,
-                            PlayerId = 7,
-                            Status = "Confirmed",
-                            TournamentId = 1
-                        },
-                        new
-                        {
                             RegistrationId = 7,
-                            PlayerId = 8,
-                            Status = "Confirmed",
-                            TournamentId = 1
-                        },
-                        new
-                        {
-                            RegistrationId = 8,
-                            PlayerId = 9,
-                            Status = "Confirmed",
-                            TournamentId = 1
-                        },
-                        new
-                        {
-                            RegistrationId = 9,
                             PlayerId = 7,
                             Status = "Confirmed",
                             TournamentId = 2
                         },
                         new
                         {
-                            RegistrationId = 10,
+                            RegistrationId = 8,
                             PlayerId = 8,
                             Status = "Confirmed",
                             TournamentId = 2
@@ -669,15 +588,6 @@ namespace poolpal_api.Migrations
                     b.Navigation("Tournament");
                 });
 
-            modelBuilder.Entity("poolpal_api.Database.Entities.Tournament.Tournament", b =>
-                {
-                    b.HasOne("poolpal_api.Database.Entities.Player", "Organiser")
-                        .WithMany()
-                        .HasForeignKey("OrganiserId");
-
-                    b.Navigation("Organiser");
-                });
-
             modelBuilder.Entity("poolpal_api.Database.Entities.Tournament.TournamentRegistration", b =>
                 {
                     b.HasOne("poolpal_api.Database.Entities.Tournament.Group", "Group")
@@ -708,7 +618,7 @@ namespace poolpal_api.Migrations
                     b.HasOne("poolpal_api.Database.Entities.Match", "Match")
                         .WithMany("PlayerMatches")
                         .HasForeignKey("MatchId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("poolpal_api.Database.Entities.Player", "Player")

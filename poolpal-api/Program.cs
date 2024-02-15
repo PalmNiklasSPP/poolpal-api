@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using poolpal_api.Database;
+using poolpal_api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +30,15 @@ builder.Services.AddControllers()
     });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.CustomOperationIds(apiDesc =>
+    {
+        var controllerName = apiDesc.ActionDescriptor.RouteValues["controller"];
+        var actionName = apiDesc.ActionDescriptor.RouteValues["action"];
+        return $"{controllerName}{actionName}";
+    });
+});
 builder.Services.AddSwaggerGenNewtonsoftSupport(); 
 var connectionString = builder.Configuration.GetConnectionString("PoolTournamentDb");
 builder.Services.AddDbContext<PoolTournamentContext>(options =>
@@ -47,6 +56,9 @@ builder.Services.AddAuthorization(options =>
         policy.RequireAuthenticatedUser();
     });
 });
+builder.Services.AddScoped<ITournamentService, TournamentService>();
+builder.Services.AddScoped<IGroupGenerationService, GroupGenerationService>();
+builder.Services.AddScoped<IMatchService, MatchService>();
 
 var app = builder.Build();
 

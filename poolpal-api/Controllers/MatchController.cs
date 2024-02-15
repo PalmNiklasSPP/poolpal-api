@@ -108,7 +108,7 @@ namespace poolpal_api.Controllers
         [HttpPost("RecordResult")]
         public IActionResult RecordResult(int matchId, int winnerPlayerId)
         {
-            var match = context.Matches.Include(m => m.PlayerMatches).FirstOrDefault(m => m.MatchId == matchId);
+            var match = context.Matches.Include(m => m.PlayerMatches).ThenInclude(x => x.Player).FirstOrDefault(m => m.MatchId == matchId);
             int[] playerNewElo = new int[2];
             int matchIndex = 0;
 
@@ -126,6 +126,7 @@ namespace poolpal_api.Controllers
                 return BadRequest("A winner has already been set for this match.");
             }
 
+            match.HasBeenPlayed = true;
             //TODO: Make it not ugly
             foreach (var playerMatch in match.PlayerMatches)
             {
@@ -152,6 +153,38 @@ namespace poolpal_api.Controllers
             context.SaveChanges();
 
             return Ok(match);
+        }
+
+        //Get recent matches
+        [HttpGet("GetRecentMatches")]
+        public IActionResult GetRecentMatches(int userId)
+        {
+            // Get the 10 most recent matches for the user
+            var matches = context.Matches
+                .Include(m => m.PlayerMatches)
+                .AsNoTracking()
+                .Where(m => m.PlayerMatches.Any(pm => pm.PlayerId == userId))
+                .OrderByDescending(m => m.MatchDate)
+                .Take(10)
+                .ToList();
+            return Ok(matches);
+        }
+
+
+        //Get Upcoming matches
+        [HttpGet("GetUpcomingMatches")]
+        public IActionResult GetUpcomingMatches(int userId)
+        {
+
+            var matches = context.Matches
+                .Include(m => m.PlayerMatches)
+                .ThenInclude(pm => pm.Player)
+                .Where(m => m.PlayerMatches.Any(pm => pm.PlayerId == userId) && m.MatchDate > DateTime.Now)
+                .OrderBy(m => m.MatchDate)
+                .Take(5)
+                .ToList();
+
+            return Ok(matches);
         }
     }
 
