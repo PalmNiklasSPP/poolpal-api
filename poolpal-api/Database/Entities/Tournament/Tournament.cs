@@ -70,14 +70,14 @@ namespace poolpal_api.Database.Entities.Tournament
 
     public enum TournamentStatus
     {
-        Draft,        // Tournament is being set up
-        Scheduled,    // Tournament dates and details are finalized, but registration is not open yet
-        Open,         // Registration is open
-        RegistrationClosed, // Registration is closed, but the tournament hasn't started
-        InProgress,   // Tournament is in progress 
-        Paused,       // Tournament is temporarily paused (e.g., due to unforeseen circumstances)
-        Resumed,      // Tournament has resumed after being paused
-        Finished,     // Tournament has concluded
-        Cancelled     // Tournament has been cancelled
+        Draft = 1,        // Tournament is being set up
+        Scheduled = 2,    // Tournament dates and details are finalized, but registration is not open yet
+        Open = 3,         // Registration is open
+        RegistrationClosed = 4, // Registration is closed, but the tournament hasn't started
+        InProgress = 5,   // Tournament is in progress 
+        Paused = 6,       // Tournament is temporarily paused (e.g., due to unforeseen circumstances)
+        Resumed = 7,      // Tournament has resumed after being paused
+        Finished = 8,     // Tournament has concluded
+        Cancelled = 9     // Tournament has been cancelled
     }
 }

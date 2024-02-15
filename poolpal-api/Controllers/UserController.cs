@@ -62,19 +62,15 @@ namespace poolpal_api.Controllers
         }
 
         [HttpGet("GetSingleUser")]
-        public async Task<ActionResult<Player>> GetUserById(string? inputId)
+        public Task<ActionResult<Player>> GetUserById(int playerId)
         {
-            int playerId;
-            if(!Int32.TryParse(inputId,out playerId))
-            {
-                return BadRequest(playerId);
-            }
+        
             var player = context.Players.FirstOrDefault(p => p.PlayerId == playerId);
             if(player == null)
             {
-                return NotFound(player);
+                return Task.FromResult<ActionResult<Player>>(NotFound(player));
             }
-            return Ok(player);
+            return Task.FromResult<ActionResult<Player>>(Ok(player));
         }
 
 

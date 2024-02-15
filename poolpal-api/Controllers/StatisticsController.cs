@@ -23,14 +23,9 @@ namespace poolpal_api.Controllers
         }
 
         [HttpGet("GetPlayerRanking")]
-        public int GetRanking(string? inputId)
+        public int GetRanking(int playerId)
         {
-            int playerId;
-            if (!Int32.TryParse(inputId, out playerId))
-            {
-                throw new ArgumentException("Invalid input");
-            }
-
+            
             int playerElo = context.Players.SingleOrDefault(p => p.PlayerId == playerId)?.ELO ?? 0;
 
             int playersWithEqualOrHigherRanking = context.Players.Where(p => p.ELO >= playerElo).ToList().Count();
@@ -39,14 +34,9 @@ namespace poolpal_api.Controllers
         }
 
         [HttpGet("GetPlayerMatches")]
-        public IEnumerable<MatchStatistics> GetRecentGames(string? userIdInput, int numberOfGames = int.MaxValue)
+        public IEnumerable<MatchStatistics> GetRecentGames(int userId, int numberOfGames = int.MaxValue)
         {
-            int userId;
-            if (!Int32.TryParse(userIdInput, out userId))
-            {
-                throw new ArgumentException($"{userIdInput} is not a number");
-            }
-
+            
             var playerID = context.Players
                 .SingleOrDefault(player => player.PlayerId == userId)?.PlayerId;
 
@@ -89,14 +79,9 @@ namespace poolpal_api.Controllers
         }
 
         [HttpGet("GetWinStatistics")]
-        public WinStatistics GetWinStatistics(string? inputId)
+        public WinStatistics GetWinStatistics(int playerId)
         {
-            int playerId;
-            if (!Int32.TryParse(inputId, out playerId))
-            {
-                throw new ArgumentException("Invalid input");
-            }
-
+         
             var allPlayerMatches = context.PlayerMatches.Where(pm => pm.PlayerId == playerId);
 
             double wonGames = allPlayerMatches.Where(pm => pm.IsWinner).Count();
@@ -105,6 +90,40 @@ namespace poolpal_api.Controllers
 
             return new WinStatistics() { totalWins = (int) wonGames, totalLoses = (int)lostGames, winrate = winRate };
         }
+
+        [HttpGet("GetGeneralStatistics")]
+        public ActionResult<GeneralStatistics> GEtGeneralStatistics()
+        {
+            var generalStatistics = new GeneralStatistics
+            {
+                TotalMatches = context.Matches.Count(),
+                TotalPlayers = context.Players.Count(),
+                TotalTournaments = context.Tournaments.Count()
+            };
+
+            return generalStatistics;
+        }
+
+        [HttpGet("GetTeamStatistics")]
+        public ActionResult<TeamStatistics> GetTeamStatistics(int teamId)
+        {
+            var matches = context.Matches
+                .Include(x => x.PlayerMatches)
+                .ThenInclude(x => x.Player)
+                .Where(m => m.PlayerMatches.Any(pm => pm.Player.SppTeamId == teamId))
+                .ToList();
+            var teamStatistics = new TeamStatistics
+            {
+                TotalMatches = matches.Count,
+                TotalPlayers = context.Players.Count(p => p.SppTeamId == teamId),
+                TotalTournaments = context.Tournaments.Include(x => x.Organiser).Count(x => x.Organiser != null && x.Organiser.SppTeamId == teamId),
+                TotalWins = matches.SelectMany(m => m.PlayerMatches).Count(pm => pm.IsWinner && pm.Player.SppTeamId == teamId),
+                TotalLosses = matches.SelectMany(m => m.PlayerMatches).Count(pm => !pm.IsWinner && pm.Player.SppTeamId == teamId)
+            };
+
+            return teamStatistics;
+        }
+
 
         #region Private methods
 

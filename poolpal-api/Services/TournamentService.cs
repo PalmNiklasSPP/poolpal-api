@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using poolpal_api.Database;
 using poolpal_api.Database.Entities;
@@ -68,10 +69,10 @@ public class TournamentService(PoolTournamentContext dbContext, IGroupGeneration
             .FirstOrDefaultAsync(t => t.TournamentId == tournamentId);
     }
 
-    public Task<List<TournamentOverview>> GetOpenTournaments(int playerId)
+    public  Task<List<TournamentOverview>> GetOpenTournaments(int playerId)
     {
         var tournaments = dbContext.Tournaments
-            .Where(t => t.ParticipationType == TournamentParticipationType.Open && t.Status <= TournamentStatus.InProgress).Select(x => new TournamentOverview
+            .Where(t => t.ParticipationType == TournamentParticipationType.Open && t.Status == TournamentStatus.Open || t.Status == TournamentStatus.Scheduled || t.Status == TournamentStatus.Draft).Select(x => new TournamentOverview
             {
                 // Map properties from Tournament to TournamentOverview
                 TournamentId = x.TournamentId,
@@ -93,7 +94,6 @@ public class TournamentService(PoolTournamentContext dbContext, IGroupGeneration
                 IsRegistered = x.Registrations.Any(r => r.PlayerId == playerId)
             })
             .ToListAsync();
-
         return tournaments;
 
     }
