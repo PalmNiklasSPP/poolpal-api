@@ -15,22 +15,44 @@ namespace poolpal_api.Controllers
     [ApiController]
     public class StatisticsController(PoolTournamentContext context) : ControllerBase
     {
-
         [HttpGet("GetLeaderboard")]
         public IEnumerable<LeaderboardEntry> GetLeaderboard()
         {
             var leaderboardEntries = context.LeaderboardEntries.OrderByDescending(x => x.ELO).ToList();
             return leaderboardEntries;
         }
-        [HttpGet("GetPlayerMatches")]
-        public IEnumerable<MatchStatistics> GetRecentGames(string user, int numberOfGames = int.MaxValue)
+
+        [HttpGet("GetPlayerRanking")]
+        public int GetRanking(string? inputId)
         {
+            int playerId;
+            if (!Int32.TryParse(inputId, out playerId))
+            {
+                throw new ArgumentException("Invalid input");
+            }
+
+            int playerElo = context.Players.SingleOrDefault(p => p.PlayerId == playerId)?.ELO ?? 0;
+
+            int playersWithEqualOrHigherRanking = context.Players.Where(p => p.ELO >= playerElo).ToList().Count();
+
+            return playersWithEqualOrHigherRanking;
+        }
+
+        [HttpGet("GetPlayerMatches")]
+        public IEnumerable<MatchStatistics> GetRecentGames(string? userIdInput, int numberOfGames = int.MaxValue)
+        {
+            int userId;
+            if (!Int32.TryParse(userIdInput, out userId))
+            {
+                throw new ArgumentException($"{userIdInput} is not a number");
+            }
+
             var playerID = context.Players
-                .SingleOrDefault(player => player.LoginId == user)?.PlayerId;
+                .SingleOrDefault(player => player.PlayerId == userId)?.PlayerId;
 
             if (!playerID.HasValue)
             {
-                throw new ArgumentException($"No player with loginID {user} exists");
+                throw new ArgumentException($"No player with loginID {userId} exists");
             }
 
             var matchIDs = context.PlayerMatches
@@ -59,51 +81,35 @@ namespace poolpal_api.Controllers
                 Winner = GetWinnerFromMatch(game.MatchId),
                 TournamentFormat = game.PoolGameType,
                 EloChange = game.PlayerMatches.SingleOrDefault(pm => pm.PlayerId == playerID.Value)?.EloChange ?? 0
-            }).ToList();
+            }).OrderByDescending(m => m.MatchDate)
+            .ThenByDescending(m => m.MatchID)
+            .ToList();
 
             return matchStatistics;
-
-
         }
 
-        [HttpGet("GetGeneralStatistics")]
-        public ActionResult<GeneralStatistics> GEtGeneralStatistics()
+        [HttpGet("GetWinStatistics")]
+        public WinStatistics GetWinStatistics(string? inputId)
         {
-            var generalStatistics = new GeneralStatistics
+            int playerId;
+            if (!Int32.TryParse(inputId, out playerId))
             {
-                TotalMatches = context.Matches.Count(),
-                TotalPlayers = context.Players.Count(),
-                TotalTournaments = context.Tournaments.Count()
-            };
+                throw new ArgumentException("Invalid input");
+            }
 
-            return generalStatistics;
+            var allPlayerMatches = context.PlayerMatches.Where(pm => pm.PlayerId == playerId);
+
+            double wonGames = allPlayerMatches.Where(pm => pm.IsWinner).Count();
+            double lostGames = allPlayerMatches.Count() - wonGames;
+            double winRate = wonGames == 0 ? 0 : wonGames / allPlayerMatches.Count() * 100;
+
+            return new WinStatistics() { totalWins = (int) wonGames, totalLoses = (int)lostGames, winrate = winRate };
         }
 
-        [HttpGet("GetTeamStatistics")]
-        public ActionResult<TeamStatistics> GetTeamStatistics(int teamId)
-        {
-            var matches = context.Matches
-                .Include(x => x.PlayerMatches)
-                .ThenInclude(x => x.Player)
-                .Where(m => m.PlayerMatches.Any(pm => pm.Player.SppTeamId == teamId))
-                .ToList();
-            var teamStatistics = new TeamStatistics
-            {
-                TotalMatches = matches.Count,
-                TotalPlayers = context.Players.Count(p => p.SppTeamId == teamId),
-                TotalTournaments = context.Tournaments.Include(x => x.Organiser).Count(x => x.Organiser != null && x.Organiser.SppTeamId == teamId),
-                TotalWins = matches.SelectMany(m => m.PlayerMatches).Count(pm => pm.IsWinner && pm.Player.SppTeamId == teamId),
-                TotalLosses = matches.SelectMany(m => m.PlayerMatches).Count(pm => !pm.IsWinner && pm.Player.SppTeamId == teamId)
-            };
-
-            return teamStatistics;
-        }
-     
         #region Private methods
 
         private Dictionary<int, List<string?>> GetOpponentsNameFromMatch(int playerId, ICollection<int> matchID)
         {
-
             var opponentPlayer = context.PlayerMatches
                 .Include(pm => pm.Player)
                 .AsNoTracking()
