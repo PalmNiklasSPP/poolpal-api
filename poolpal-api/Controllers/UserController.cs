@@ -61,6 +61,22 @@ namespace poolpal_api.Controllers
             return Ok(players);
         }
 
+        [HttpGet("GetSingleUser")]
+        public async Task<ActionResult<Player>> GetUserById(string? inputId)
+        {
+            int playerId;
+            if(!Int32.TryParse(inputId,out playerId))
+            {
+                return BadRequest(playerId);
+            }
+            var player = context.Players.FirstOrDefault(p => p.PlayerId == playerId);
+            if(player == null)
+            {
+                return NotFound(player);
+            }
+            return Ok(player);
+        }
+
 
         [HttpGet("GetUserBySearch")]
         public IEnumerable<Player> GetUserBySearch(string search)
