@@ -52,6 +52,9 @@ namespace poolpal_api.Database
                 .Property(t => t.Format)
                 .HasConversion<string>();
             modelBuilder.Entity<Tournament>()
+                .Property(t => t.Status)
+                .HasConversion<string>();
+            modelBuilder.Entity<Tournament>()
                 .Property(t => t.GameType)
                 .HasConversion<string>();
             modelBuilder.Entity<Tournament>()
@@ -97,12 +100,15 @@ namespace poolpal_api.Database
             modelBuilder.Entity<PlayerMatch>()
                 .HasOne(pm => pm.Player)
                 .WithMany(p => p.PlayerMatches)
-                .HasForeignKey(pm => pm.PlayerId);
+                .HasForeignKey(pm => pm.PlayerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
 
             modelBuilder.Entity<PlayerMatch>()
                 .HasOne(pm => pm.Match)
                 .WithMany(m => m.PlayerMatches)
-                .HasForeignKey(pm => pm.MatchId);
+                .HasForeignKey(pm => pm.MatchId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<SppTeam>()
                 .HasKey(x => x.Id);
@@ -110,7 +116,6 @@ namespace poolpal_api.Database
             modelBuilder.Entity<SppTeam>()
                 .Property(x => x.OrganisationUnit)
                 .HasConversion<string>();
-
 
 
             modelBuilder.Entity<LeaderboardEntry>().ToView("Leaderboard").HasNoKey();

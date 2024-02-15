@@ -24,6 +24,11 @@ namespace poolpal_api.Services
                 throw new InvalidOperationException("Tournament or groups not found.");
             }
 
+            if (tournament.Status >= TournamentStatus.InProgress)
+            {
+                return; //Tournament already started 
+            }
+
             // Shuffle the registrations
             var shuffledRegistrations = tournament.Registrations.Where(x => x.Status == RegistrationStatus.Confirmed).OrderBy(r => Guid.NewGuid()).ToList();
 

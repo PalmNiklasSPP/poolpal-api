@@ -10,6 +10,9 @@ namespace poolpal_api.Database.Seeders
     {
         private const string Desc =
             "Introducing NickeP, a master of precision and strategy on the pool table. Known for exceptional cue control and tactical gameplay, NickeP brings a unique blend of focus and flair to every match. With numerous victories under their belt, NickeP is a formidable opponent and a crowd favorite. Watch as NickeP lines up their shots, showcasing a perfect blend of skill and style.";
+
+        private const string BoBDesc =
+            "Meet BoB: Where Business meets Brokers and billiards balls meet pockets! We're a team of tech aces and poolside tacticians. Whether it's tackling complex algorithms or tricky bank shots, our approach is all about precision, power, and a bit of playful banter. Get ready, competitors! In the digital and felt world, we're here to rack up successes, and pocket victories with a smile.";
         public static void DoSeed(ModelBuilder mb)
         {
             //ORDER IS IMPORTANT HERE
@@ -26,7 +29,7 @@ namespace poolpal_api.Database.Seeders
         {
             var data = new SppTeam[]
             {
-                new() { Id = 1, ShortName = "BoB", FullName = "Business & Broker", OrganisationUnit = OrganisationUnit.Tech},
+                new() { Id = 1, ShortName = "BoB", FullName = "Business & Broker", OrganisationUnit = OrganisationUnit.Tech, Description = BoBDesc},
                 new() { Id = 2, ShortName = "PW", FullName = "Private Web", OrganisationUnit = OrganisationUnit.Tech},
                 new() { Id = 99, ShortName = "Other", FullName = "Other", OrganisationUnit = OrganisationUnit.Other},
             };
@@ -96,8 +99,8 @@ namespace poolpal_api.Database.Seeders
         {
             var data = new Tournament[]
             {
-                new() { TournamentId = 1, Name = "Tournament 1", Format = TournamentFormat.RoundRobin, StartDate = new DateTime(2024, 1, 1), EndDate = new DateTime(2024, 1, 7), ParticipantLimit = 10, IsTeamBased = false, OrganiserId = 1, Description = "Description for Tournament 1" },
-                new() { TournamentId = 2, Name = "Tournament 2", Format = TournamentFormat.SingleElimination, StartDate = new DateTime(2024, 2, 1), EndDate = new DateTime(2024, 2, 7), ParticipantLimit = 8, IsTeamBased = false, OrganiserId = 1, Description = "Description for Tournament 2" }
+                new(TournamentStatus.Open) { TournamentId = 1, Name = "Tournament 1", Format = TournamentFormat.RoundRobin, StartDate = new DateTime(2024, 1, 1), EndDate = new DateTime(2024, 1, 7), ParticipantLimit = 10, IsTeamBased = false, OrganiserId = 1, Description = "Description for Tournament 1"},
+                new(TournamentStatus.Open) { TournamentId = 2, Name = "Tournament 2", Format = TournamentFormat.SingleElimination, StartDate = new DateTime(2024, 2, 1), EndDate = new DateTime(2024, 2, 7), ParticipantLimit = 8, IsTeamBased = false, OrganiserId = 1, Description = "Description for Tournament 2"}
             };
             mb.Entity<Tournament>().HasData(data);
         }

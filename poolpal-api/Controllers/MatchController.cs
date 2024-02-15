@@ -108,7 +108,7 @@ namespace poolpal_api.Controllers
         [HttpPost("RecordResult")]
         public IActionResult RecordResult(int matchId, int winnerPlayerId)
         {
-            var match = context.Matches.Include(m => m.PlayerMatches).FirstOrDefault(m => m.MatchId == matchId);
+            var match = context.Matches.Include(m => m.PlayerMatches).ThenInclude(x => x.Player).FirstOrDefault(m => m.MatchId == matchId);
             int[] playerNewElo = new int[2];
             int matchIndex = 0;
 
@@ -126,6 +126,7 @@ namespace poolpal_api.Controllers
                 return BadRequest("A winner has already been set for this match.");
             }
 
+            match.HasBeenPlayed = true;
             //TODO: Make it not ugly
             foreach (var playerMatch in match.PlayerMatches)
             {

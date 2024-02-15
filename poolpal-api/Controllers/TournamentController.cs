@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using poolpal_api.Database.Entities;
-using poolpal_api.Services;
-using System.Threading.Tasks;
 using poolpal_api.Database.Entities.Tournament;
-using poolpal_api.Models.RequestModels;
 using poolpal_api.Models;
+using poolpal_api.Models.RequestModels;
+using poolpal_api.Services;
+
+namespace poolpal_api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class TournamentController : ControllerBase
 {
     private readonly ITournamentService _tournamentService;
@@ -19,14 +20,14 @@ public class TournamentController : ControllerBase
         _groupGenerationService = groupGenerationService;
     }
 
-    [HttpPost]
+    [HttpPost("create")]
     public async Task<IActionResult> CreateTournament([FromBody] CreateTournamentRequest request)
     {
         var startDate = DateTime.Parse(request.StartDate);
         
         
-    if(!Enum.TryParse<TournamentFormat>(request.Format, out var format) || !Enum.TryParse<TournamentParticipationType>(request.ParticipationType, out var participationType))
-        return BadRequest("Invalid format or participation type.");
+        if(!Enum.TryParse<TournamentFormat>(request.Format, out var format) || !Enum.TryParse<TournamentParticipationType>(request.ParticipationType, out var participationType))
+            return BadRequest("Invalid format or participation type.");
 
         var tournament = new Tournament
         {
@@ -38,7 +39,7 @@ public class TournamentController : ControllerBase
             ParticipationType = participationType,
             Description = request.Description, // Set the description
             OrganiserId = request.OrganiserId, // Set the organiser
-            Groups = []
+            Groups = [],
         };
 
         // Create groups based on NumberOfGroups
@@ -46,6 +47,9 @@ public class TournamentController : ControllerBase
         {
             tournament.Groups.Add(new Group { Name = $"Group {i + 1}" });
         }
+
+        tournament.TryChangeStatus(TournamentStatus.Scheduled);
+
         var createdTournament = await _tournamentService.CreateTournament(tournament);
         return Ok("Tournament created");
     }
@@ -67,7 +71,9 @@ public class TournamentController : ControllerBase
     {
         try
         {
-            await _groupGenerationService.GenerateGroupsForTournament(tournamentId);
+            await _tournamentService.StartTournament(tournamentId);
+             
+            
             return Ok("Tournament started and groups generated.");
         }
         catch (InvalidOperationException ex)
@@ -77,7 +83,7 @@ public class TournamentController : ControllerBase
     }
 
     [HttpGet("{tournamentId}")]
-    public async Task<IActionResult> GetTournament(int tournamentId)
+    public async Task<ActionResult<Tournament>> GetTournament(int tournamentId)
     {
         var tournament = await _tournamentService.GetTournamentById(tournamentId);
         if (tournament == null)
@@ -87,5 +93,18 @@ public class TournamentController : ControllerBase
         return Ok(tournament);
     }
 
-    // Additional endpoints as needed...
+    //get open tournaments
+    [HttpGet("getOpen")]
+    public async Task<IEnumerable<TournamentOverview>> GetOpenTournaments(int playerId)
+    {
+        var tournaments = await _tournamentService.GetOpenTournaments(playerId);
+        return tournaments;
+    }
+
+    [HttpGet("{tournamentId:int}/group/{groupId:int}/matches")]
+    public async Task<IEnumerable<Match>> GetMatchesInGroup(int tournamentId, int groupId)
+    {
+        var matches = await _tournamentService.GetMatchesForGroupInTournament(tournamentId, groupId);
+        return matches;
+    }
 }

@@ -7,6 +7,7 @@ using poolpal_api.Models.PoolTournamentApi.Models;
 using poolpal_api.Models.RequestModels;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Principal;
+using poolpal_api.Models;
 
 namespace poolpal_api.Controllers
 {
@@ -52,7 +53,7 @@ namespace poolpal_api.Controllers
             var matchStatistics = recentGames.Select(game => new MatchStatistics
             {
                 MatchID = game.MatchId,
-                MatchDate = game.MatchDate.ToString("yyyy-MM-dd"),
+                MatchDate = game.MatchDate.Value.ToString("yyyy-MM-dd"),
                 Opponents = opponentsForMatches.TryGetValue(game.MatchId, out var opponents) ? string.Join(", ", opponents) : "Missing opponents",
                 isWinner = game.PlayerMatches.Any(pm => pm.IsWinner && pm.PlayerId == playerID.Value),
                 Winner = GetWinnerFromMatch(game.MatchId),
@@ -64,6 +65,40 @@ namespace poolpal_api.Controllers
 
 
         }
+
+        [HttpGet("GetGeneralStatistics")]
+        public ActionResult<GeneralStatistics> GEtGeneralStatistics()
+        {
+            var generalStatistics = new GeneralStatistics
+            {
+                TotalMatches = context.Matches.Count(),
+                TotalPlayers = context.Players.Count(),
+                TotalTournaments = context.Tournaments.Count()
+            };
+
+            return generalStatistics;
+        }
+
+        [HttpGet("GetTeamStatistics")]
+        public ActionResult<TeamStatistics> GetTeamStatistics(int teamId)
+        {
+            var matches = context.Matches
+                .Include(x => x.PlayerMatches)
+                .ThenInclude(x => x.Player)
+                .Where(m => m.PlayerMatches.Any(pm => pm.Player.SppTeamId == teamId))
+                .ToList();
+            var teamStatistics = new TeamStatistics
+            {
+                TotalMatches = matches.Count,
+                TotalPlayers = context.Players.Count(p => p.SppTeamId == teamId),
+                TotalTournaments = context.Tournaments.Include(x => x.Organiser).Count(x => x.Organiser != null && x.Organiser.SppTeamId == teamId),
+                TotalWins = matches.SelectMany(m => m.PlayerMatches).Count(pm => pm.IsWinner && pm.Player.SppTeamId == teamId),
+                TotalLosses = matches.SelectMany(m => m.PlayerMatches).Count(pm => !pm.IsWinner && pm.Player.SppTeamId == teamId)
+            };
+
+            return teamStatistics;
+        }
+     
         #region Private methods
 
         private Dictionary<int, List<string?>> GetOpponentsNameFromMatch(int playerId, ICollection<int> matchID)
