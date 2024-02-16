@@ -14,6 +14,7 @@ public class TournamentController : ControllerBase
     private readonly ITournamentService _tournamentService;
     private readonly IGroupGenerationService _groupGenerationService;
 
+
     public TournamentController(ITournamentService tournamentService, IGroupGenerationService groupGenerationService)
     {
         _tournamentService = tournamentService;
@@ -106,5 +107,13 @@ public class TournamentController : ControllerBase
     {
         var matches = await _tournamentService.GetMatchesForGroupInTournament(tournamentId, groupId);
         return matches;
+    }
+
+
+    [HttpGet("{tournamentId:int}/group/{groupId:int}/standings")]
+    public async Task<StandingsModel> GetStandingsForGroup(int tournamentId, int groupId)
+    {
+        var standings = await _tournamentService.GetStandingsForGroup(tournamentId, groupId);
+        return standings;
     }
 }

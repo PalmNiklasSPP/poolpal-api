@@ -19,6 +19,8 @@ public interface ITournamentService
     Task<bool> StartTournament(int tournamentId);
 
     Task<List<Match>> GetMatchesForGroupInTournament(int tournamentId, int groupId);
+
+    Task<StandingsModel> GetStandingsForGroup(int tournamentId, int groupId);
 }
 public class TournamentService(PoolTournamentContext dbContext, IGroupGenerationService groupService, IMatchService matchService) : ITournamentService
 {
@@ -123,4 +125,47 @@ public class TournamentService(PoolTournamentContext dbContext, IGroupGeneration
             .ThenBy(x => x.HasBeenPlayed)
             .ToListAsync();
     }
+
+    public async Task<StandingsModel> GetStandingsForGroup(int tournamentId, int groupId)
+    {
+        var groupMatches = await dbContext.Matches
+            .Where(m => m.GroupId == groupId)
+            .ToListAsync();
+
+        var playedMatchIds = groupMatches
+            .Where(m => m.HasBeenPlayed)
+            .Select(m => m.MatchId)
+            .ToList();
+
+        var playerIdsInGroup = await dbContext.TournamentRegistrations
+            .Where(tr => tr.GroupId == groupId)
+            .Select(tr => tr.PlayerId)
+            .ToListAsync();
+
+        var playerMatchesInGroup = await dbContext.PlayerMatches
+            .Where(pm => playerIdsInGroup.Contains(pm.PlayerId))
+            .ToListAsync();
+
+        var playerStatistics = playerIdsInGroup
+            .Select(playerId => new PlayerStatistics
+            {
+                PlayerId = playerId,
+                PlayerName = dbContext.Players.FirstOrDefault(p => p.PlayerId == playerId)?.PlayerName ?? "Unknown",
+                TotalWins = playerMatchesInGroup.Count(pm => pm.PlayerId == playerId && pm.IsWinner && playedMatchIds.Contains(pm.MatchId)),
+                TotalLosses = playerMatchesInGroup.Count(pm => pm.PlayerId == playerId && !pm.IsWinner && playedMatchIds.Contains(pm.MatchId)),
+                MatchesPlayed = playerMatchesInGroup.Count(pm => pm.PlayerId == playerId && playedMatchIds.Contains(pm.MatchId)),
+                Score = playerMatchesInGroup.Where(pm => pm.PlayerId == playerId).Sum(pm => pm.Score)
+            }).OrderByDescending(x => x.MatchesPlayed).ThenByDescending(x => x.TotalWins).ToList();
+
+        var standings = new StandingsModel(playerStatistics)
+        {
+            GroupId = groupId,
+            TournamentId = tournamentId,
+        };
+
+        return standings;
+    }
+
+
+
 }

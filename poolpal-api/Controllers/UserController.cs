@@ -1,14 +1,11 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
-using System.DirectoryServices.AccountManagement;
-
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using poolpal_api.Database;
-using System.Security.Principal;
-using poolpal_api.Database.Entities;
 using Microsoft.Extensions.Caching.Memory;
+using poolpal_api.Database;
+using poolpal_api.Database.Entities;
 using poolpal_api.Models.RequestModels;
+using System.DirectoryServices.AccountManagement;
+using System.Security.Principal;
 
 namespace poolpal_api.Controllers
 {
