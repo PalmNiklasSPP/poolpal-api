@@ -10,7 +10,7 @@ using System.Security.Principal;
 namespace poolpal_api.Controllers
 {
     [Route("api/[controller]")]
-    public class UserController(PoolTournamentContext context, IMemoryCache memoryCache) : ControllerBase
+    public class UserController(PoolPalDatabaseContext context, IMemoryCache memoryCache) : ControllerBase
     {
         [HttpGet("CurrentUser")]
         public async Task<ActionResult<Player>> GetCurrentUser()

@@ -13,7 +13,7 @@ namespace poolpal_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StatisticsController(PoolTournamentContext context) : ControllerBase
+    public class StatisticsController(PoolPalDatabaseContext context) : ControllerBase
     {
         [HttpGet("GetLeaderboard")]
         public IEnumerable<LeaderboardEntry> GetLeaderboard()

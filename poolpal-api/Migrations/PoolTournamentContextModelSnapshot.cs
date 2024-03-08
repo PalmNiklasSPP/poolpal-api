@@ -10,7 +10,7 @@ using poolpal_api.Database;
 
 namespace poolpal_api.Migrations
 {
-    [DbContext(typeof(PoolTournamentContext))]
+    [DbContext(typeof(PoolPalDatabaseContext))]
     partial class PoolTournamentContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

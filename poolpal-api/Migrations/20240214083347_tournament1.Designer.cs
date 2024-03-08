@@ -11,7 +11,7 @@ using poolpal_api.Database;
 
 namespace poolpal_api.Migrations
 {
-    [DbContext(typeof(PoolTournamentContext))]
+    [DbContext(typeof(PoolPalDatabaseContext))]
     [Migration("20240214083347_tournament1")]
     partial class tournament1
     {

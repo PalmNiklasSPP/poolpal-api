@@ -11,7 +11,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(b =>
     {
-        b.WithOrigins("http://localhost:5173") // Change this to specify allowed origins
+        b.WithOrigins("http://localhost:5173", "http://localhost:5250") // Change this to specify allowed origins
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
@@ -41,7 +41,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 builder.Services.AddSwaggerGenNewtonsoftSupport(); 
 var connectionString = builder.Configuration.GetConnectionString("PoolTournamentDb");
-builder.Services.AddDbContext<PoolTournamentContext>(options =>
+builder.Services.AddDbContext<PoolPalDatabaseContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddAuthentication(IISDefaults.AuthenticationScheme).AddNegotiate();
@@ -63,12 +63,16 @@ builder.Services.AddScoped<IMatchService, MatchService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
-    app.UseSwaggerUI();
-}
-app.UseHttpsRedirection();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "PoolPal API");
+        c.RoutePrefix = string.Empty;  // Set Swagger UI at apps root
+    });
+//}
+//app.UseHttpsRedirection();
 app.UseRouting(); // Add this if not already present
 app.UseCors(); // CORS middleware
 
