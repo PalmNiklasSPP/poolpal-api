@@ -11,7 +11,7 @@ namespace poolpal_api.Services
         Task CreateRoundRobinMatchesForTournament(int tournamentId);
     }
 
-    public class MatchService(PoolTournamentContext dbContext) : IMatchService
+    public class MatchService(PoolPalDatabaseContext dbContext) : IMatchService
     {
         public async Task CreateRoundRobinMatchesForTournament(int tournamentId)
         {

@@ -9,7 +9,7 @@ namespace poolpal_api.Services
         Task GenerateGroupsForTournament(int tournamentId);
     }
 
-    public class GroupGenerationService(PoolTournamentContext dbContext) : IGroupGenerationService
+    public class GroupGenerationService(PoolPalDatabaseContext dbContext) : IGroupGenerationService
     {
         public async Task GenerateGroupsForTournament(int tournamentId)
         {

@@ -22,7 +22,7 @@ public interface ITournamentService
 
     Task<StandingsModel> GetStandingsForGroup(int tournamentId, int groupId);
 }
-public class TournamentService(PoolTournamentContext dbContext, IGroupGenerationService groupService, IMatchService matchService) : ITournamentService
+public class TournamentService(PoolPalDatabaseContext dbContext, IGroupGenerationService groupService, IMatchService matchService) : ITournamentService
 {
     public async Task<Tournament> CreateTournament(Tournament tournament)
     {

@@ -7,9 +7,9 @@ using poolpal_api.Models.PoolTournamentApi.Models;
 namespace poolpal_api.Database
 {
 
-    public class PoolTournamentContext : DbContext
+    public class PoolPalDatabaseContext : DbContext
     {
-        public PoolTournamentContext(DbContextOptions<PoolTournamentContext> options)
+        public PoolPalDatabaseContext(DbContextOptions<PoolPalDatabaseContext> options)
         : base(options)
         {
         }

@@ -13,7 +13,7 @@ namespace poolpal_api.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    public class MatchesController(PoolTournamentContext context) : ControllerBase
+    public class MatchesController(PoolPalDatabaseContext context) : ControllerBase
     {
         // POST: api/Matches/Create
         [HttpPost("CreateMatch")]
